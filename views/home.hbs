@@ -1,0 +1,49 @@
+
+{{> header}}
+
+<body>
+
+<div class="container">
+    <button type="button" class="btn btn-secondary"><a href="/addPost">Add new post</a></button>
+</div>
+
+<div class="album py-5 bg-light">
+    <div class="container">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+{{#allPosts}}
+
+
+
+            <div class="col">
+                <div class="card shadow-sm">
+                    {{#if image}}
+                        <img src="/images/{{image}}" alt="">
+                    {{else}}
+                        <img src="https://via.placeholder.com/200x200/258DC8/E0F6FD" alt="">
+                    {{/if}}
+
+                    <div class="card-body">
+                     <h2> {{title}}</h2>
+                   <p class="card-text">   {{text}}    </p>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-outline-secondary"><a href="/readPost?id={{id}}"> Read more </a></button>
+                            </div>
+                         <small class="text-muted">{{tags}}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+{{/allPosts}}
+  </div>
+
+
+    </div>
+</div>
+
+</body>
+{{> footer}}
