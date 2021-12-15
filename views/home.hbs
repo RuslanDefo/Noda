@@ -39,7 +39,55 @@
 
 
 {{/allPosts}}
+
+
+{{#tagsPosts}}
+
+      <div class="col">
+          <div class="card shadow-sm">
+              {{#if image}}
+                  <img src="/images/{{image}}" alt="">
+              {{else}}
+                  <img src="https://via.placeholder.com/200x200/258DC8/E0F6FD" alt="">
+              {{/if}}
+
+              <div class="card-body">
+                  <h2> {{title}}</h2>
+                  <p class="card-text">   {{text}}    </p>
+
+                  <div class="d-flex justify-content-between align-items-center">
+                      <div class="btn-group">
+                          <button type="button" class="btn btn-sm btn-outline-secondary"><a href="/readPost?id={{id}}"> Read more </a></button>
+                      </div>
+                      <small class="text-muted">{{tags}}</small>
+                  </div>
+              </div>
+          </div>
+      </div>
+  {{/tagsPosts}}
+
   </div>
+
+        {{#pagination 16 25 5}}
+            <div class="pagination">
+                {{#unless startFromFirstPage}}
+                    <a href="#">&lt;</a>
+                {{/unless}}
+
+                {{#each pages}}
+                    {{#if isCurrent}}
+                        [<a href="?page={{page}}">{{page}}</a>]
+                    {{/if}}
+                    {{#unless isCurrent}}
+                        <a href="?page={{page}}">{{page}}</a>
+                    {{/unless}}
+                {{/each}}
+
+                {{#unless endAtLastPage}}
+                    <a href="#">&gt;</a>
+                {{/unless}}
+            </div>
+        {{/pagination}}
 
 
     </div>

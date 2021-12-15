@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const multer = require('multer');
-// const {response, request} = require("express");
+ const {response, res, request, req} = require("express");
 
 let sessionUser = {};
 
@@ -49,6 +49,7 @@ const imagesBase = multer.diskStorage({
  // app.use(express.static(__dirname +'/images'));
 app.use(express.static(__dirname +'/assets'));
 app.use(express.json());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(session({ secret: "ololo", saveUninitialized: true, resave: true }));
@@ -65,6 +66,53 @@ hbs.registerHelper("ifLogged", function(user){
 
     }
 
+});
+
+
+hbs.registerHelper('pagination', function(currentPage, totalPage, size, options) {
+    let startPage, endPage, context;
+
+    if (arguments.length === 3) {
+        options = size;
+        size = 5;
+    }
+
+    startPage = currentPage - Math.floor(size / 2);
+    endPage = currentPage + Math.floor(size / 2);
+
+    if (startPage <= 0) {
+        endPage -= (startPage - 1);
+        startPage = 1;
+    }
+
+    if (endPage > totalPage) {
+        endPage = totalPage;
+        if (endPage - size + 1 > 0) {
+            startPage = endPage - size + 1;
+        } else {
+            startPage = 1;
+        }
+    }
+
+    context = {
+        startFromFirstPage: false,
+        pages: [],
+        endAtLastPage: false,
+    };
+    if (startPage === 1) {
+        context.startFromFirstPage = true;
+    }
+    for (let i = startPage; i <= endPage; i++) {
+        context.pages.push({
+            page: i,
+            isCurrent: i === currentPage,
+        });
+    }
+    if (endPage === totalPage) {
+        context.endAtLastPage = true;
+    }
+
+    return options.fn(context);
 });
 
 
@@ -131,6 +179,7 @@ app.get("/user", (req, res) => {
 
 app.get("/logout", (req, res) => {
     req.session.destroy();
+    sessionUser = {};
     return res.send("User logged out!");
     console.log(sessionUser)
 })
@@ -139,59 +188,152 @@ app.get("/logout", (req, res) => {
 app.get("/", function(request, response){
       let posts = fs.readFileSync(postsBase,"utf8");
       posts = JSON.parse(posts);
-      let totalCards =  new Array(Object.keys(posts).length);
+       let totalCards =  new Array(Object.values(posts));
 
-      console.log(totalCards)
       //console.log(posts)
-let titles =[];
-let postText = [];
+ let neededPosts;
+ neededPosts = request.query.id;
+
+
 let tags = [];
-let imgPath = [];
+
 
         for (let i = 0; i < posts.length; i++) {
-        let title = posts[i].title;
-        titles.push(title);
 
-        let text = posts[i].text;
-        postText.push(text);
-
-        let tag = posts[i].tags;
-        tags.push(tag);
-
-       let author = posts[i].author;
-
-       let image = posts[i].image;
-       imgPath.push(image);
-
-        let postId = posts[i].id;
-
+          let tag = posts[i].tags;
+          tags.push(tag);
  }
 
+    let neededTags = [];
+        for (let subArray of tags) {
+            for (let elem of subArray) {
+                neededTags.push(elem);
+            }
+        }
 
-let thisPost = [];
-let thisTags =[];
-let thistTitle = [];
+    let result = neededTags.find(el => el === neededPosts)
 
- let neededPosts = request.query.tags;
+let tagsPosts = [];
+let foundContact = [];
+    for (let i = 0; i < posts.length; i++) {
+        let tag = posts[i].tags;
+        let tager = tag.filter(es => es == result)
+        console.log('TAGER===' + tager)
+       if (tager.length > 0 ) {
+          let searchedId = tager;
+           console.log('SEARCHED===' + searchedId)
+           foundContact.push(posts[i]);
+         // tagsPosts.push(searchedId);
+       }
+    };
 
-//let result = posts.filter(city => city.tags === neededPosts)
+    console.log('EHEEEY ==' + JSON.stringify(foundContact))
 
-let result = posts.findIndex(el => el.tags === neededPosts)
-//  let findByTags = function filterById(arr, id) {
+
+    // const findItemNested = (arr, itemId, nestingKey) => (
+    //     arr.reduce((a, item) => {
+    //         if (a) return a;
+    //         if (item == itemId) return item;
+    //         if (item[nestingKey]) {
+    //
+    //             console.log(item[nestingKey])
+    //             return findItemNested(item[nestingKey], itemId, nestingKey)
+    //
+    //         }
+    //     }, null)
+    // );
+    //
+    //
+    // const res = findItemNested(posts, tagsPosts, "tags");
+    // console.log('SSSSSSSSSSS' + res);
+
+    // function findByIdRecursive(array, tags) {
+    //     for (let index = 0; index < array.length; index++) {
+    //         const element = array[index];
+    //         if (element.tags == tags) {
+    //             return element;
+    //         } else {
+    //             if (element.children) {
+    //                 const found = findByIdRecursive(element.children, tags);
+    //
+    //                 if (found) {
+    //                     return found;
+    //                     console.log('FOUND ++' + found)
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    //
+    // findByIdRecursive(posts, tagsPosts);
+
+  // const filteredPosts = posts.slice().filter(item => item.tags == tagsPosts);
+
+  // console.log('This posts NEEDE==' + JSON.stringify(filteredPosts))
+
+    //console.log('This posts ==' + tagsPosts)
+    // function reducer(acc, value) {
+    //     if (value.seriesNumber === 2) {
+    //         acc.push(value);
+    //     }
+    //     return acc;
+    // }
+
+    // const filterBooks = posts.reduce(reducer, []);
+
+
+    console.log('Nuu zhee = ' + JSON.stringify(neededTags))
+    console.log('Nuu chto tam = ' + result)
+
+
+    // const test = tags.map((it) => it == neededPosts);
+    //     console.log('This need = ' + test)
+
+   // let nuDavay = tags.map( index => index === neededPosts);
+    //     console.log('Etot titles = ' + tags)
+    //     console.log('Etot titles TYPEOF= ' + (typeof tags))
+    // console.log('Nuzhniy id TYPEOF= ' + (typeof neededPosts))
+    // console.log('Nuzhniy id = ' + neededPosts)
+    // console.log('Hyyyyyyy ' + nuDavay)
+   // let veryNeed = tags.filter(el => el == request.query.id);
+
+//     for (let i = 0; i < tags.length; i++) { //проходимся по первому масиву for (let j = 0; j< neededPosts.length; j++) { // ищем соотвествия во втором массиве
+//         if (tags[i] == neededPosts[j]) {
+//             console.log('EEEEE' + tags[i]);// если совпадаем делаем что либо с этим значением
+//         }
+//     }
+//     console.log('HELLO WORLD')
+// };
+
+
+
+
+
+            // console.log('This haha = ' +  tags )
+
+//thisTags.push(request.query.id)
+
+
+
+ // let result = posts.filter(city => city.tags === neededPosts)
+
+
+
+//   let findByTags = function filterById(arr, id) {
 //    return arr.filter(function(item, i, arr) {
 //        if (item.tags == neededPosts) {
 //        thisPost.push(item.text);
 //        thisTags.push(item.tags);
-//        thisTitle = item.title;
-//        };
+//         thisTitle = item.title;
+//         };
 //    });
-//  };
-//
-// findByTags(posts, neededPosts);
+//   };
+// //
+//  findByTags(posts, neededPosts);
 
- if (request.query.tags != undefined) {
-   response.render('/', {
-     tagsPosts: thisTags
+ if (request.query.id !== undefined) {
+   response.render('home.hbs', {
+     tagsPosts: foundContact
  })
 
  } else {
@@ -200,28 +342,18 @@ let result = posts.findIndex(el => el.tags === neededPosts)
    });
 
  }
-    console.log(posts)
-     console.log(result)
- //console.log(titles)
-
-
-
-    // response.render('home', {
-    //     allPosts: posts
-    // });
-
-    //  console.log(posts)
-
-  //  console.log(sessionUser.name)
+    console.log('Request == ' + request.query.id)
+   // console.log('RENDER THIS ' + filteredPosts)
+    // console.log('ONO ' + JSON.stringify(posts))
 });
 
 app.get("/addPost", function(request, response){
-    if (sessionUser != {}) {
+    if (sessionUser.name) {
         response.render('add_post.hbs');
         console.log(sessionUser)
     }
     else {
-        response.end('FUCK YOU');
+        response.end('please register or login');
         console.log(sessionUser)
     }
 });
@@ -237,24 +369,21 @@ app.post("/addPost", jsonParser, upload.single('avatar') ,
     const postText = request.body.postText;
     const postId = Date.now();
     let postImage;
+
+    console.log(typeof postTags)
     const imageChecker = function (){
         if (request.file) {
             postImage = request.file.filename;
         }
-
     }
 
     imageChecker();
 
-    let comma = ',';
+    const re = postTags.split(",");
 
-        function splitString(stringToSplit, separators) {
-            let arrayOfStrings = stringToSplit.split(separators);
-        }
+console.log(re);
 
-        splitString(postTags,comma);
-
-        let newPost = {title: postTitle, text: postText, tags: postTags, author: sessionUser.name, image: postImage, id: postId  };
+        let newPost = {title: postTitle, text: postText, tags: re, author: sessionUser.name, image: postImage, id: postId  };
 
     let data = fs.readFileSync(postsBase,"utf8");
     let posts = JSON.parse(data);
@@ -307,20 +436,33 @@ app.get("/readPost/", function (req, res) {
 
   a(posts, neededId);
 
-let arrTags = thisTags.split(',');
-
    console.log(typeof thisTags);
 
     res.render('full-post', {
    postTitle: thisTitle,
    postText: thisPost,
    postImage: thisImage,
-   postTags: arrTags,
-
+   postTags: thisTags
   });
-    console.log('HI SUKAA' + req.body)
+    console.log('HI ZAPROS' + req.body)
 });
 
+app.get('/api/posts', (req, res) => {
+    let posts = fs.readFileSync(postsBase,"utf8");
+    posts = JSON.parse(posts);
+
+    const pageCount = Math.ceil(posts.length / 1);
+    let page = parseInt(req.query.p);
+    if (!page) { page = 1;}
+    if (page > pageCount) {
+        page = pageCount
+    }
+    res.json({
+        "page": page,
+        "pageCount": pageCount,
+        "posts": posts.slice(page * 1 - 1, page * 1)
+    });
+});
 
 app.listen(port, ()=> {
     console.log('Server started')
