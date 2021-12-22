@@ -37,7 +37,6 @@ const imagesBase = multer.diskStorage({
 
 const upload = multer({storage: imagesBase});
 
-// app.use(express.static(__dirname +'/images'));
 app.use(express.static(__dirname + '/assets'));
 app.use(express.json());
 app.use(bodyParser.json());
@@ -48,7 +47,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'hbs');
 hbs.registerPartials(__dirname + '/views/partials')
 
-hbs.registerHelper("ifLogged", function () {
+hbs.registerHelper('ifLogged', function () {
 
     if (sessionUser.name !== undefined) {
         return new hbs.SafeString('Welcome to the matrix       ,' + sessionUser.name)
@@ -167,18 +166,34 @@ app.get('/', function (request, response) {
         page = pageCount
     }
 
-
-    let pageNavLinks = [];
+     let pageNavLinks = [];
 
     let pageLinks = function () {
+          pageNavLinks = [];
+          let a;
         for (let i = 0; i < pageCount; i++) {
             let link = 1;
             link += i;
-            pageNavLinks.push(link)
+            let newNavLinks = {
+              number: link,
+              active: a
+            }
+            pageNavLinks.push(newNavLinks)
         }
     };
 
     pageLinks();
+
+    let addActiveLink = function filterById(arr, id) {
+        return arr.filter(function (item) {
+            if (item.number === id) {
+                item.active = 'active';
+                console.log(item.number, id)
+            }
+        })
+    };
+    addActiveLink(pageNavLinks, page)
+
 
     posts = posts.slice(page * 3 - 3, page * 3)
 
@@ -192,6 +207,7 @@ app.get('/', function (request, response) {
             allPosts: posts,
             page: page,
             pageCount: pageNavLinks
+          //  thisPage: activeLink
         })
     }
 });

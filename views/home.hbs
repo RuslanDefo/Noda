@@ -70,10 +70,12 @@
         </div>
 
         <div class="paginatedContainer">
-            {{#pageCount}}
+     {{#pageCount}}
 
 
-                <a href="/?page={{this}}" id="navLink"> {{this}}</a>{{/pageCount}}
+                <a href="/?page={{number}}" id="navLink" class="navigation {{active}}">{{number}}</a>  {{/pageCount}}
+
+
         </div>
 
     </div>

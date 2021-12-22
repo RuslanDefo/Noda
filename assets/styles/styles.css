@@ -105,4 +105,8 @@ padding-bottom: 5px;
   border-radius: 7px;
   margin: 0 3px;
 }
+
+.navigation.active {
+  background: gray;
+}
 /*# sourceMappingURL=styles.css.map */
