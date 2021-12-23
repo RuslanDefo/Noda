@@ -93,7 +93,7 @@ app.post('/sign-in', (req, res) => {
     let data = fs.readFileSync(usersBase, 'utf8');
     data = JSON.parse(data);
 
-    const user = data.find(user => user.name === req.body.userLogin)
+    const user = data.find(user => user.mail === req.body.userLogin)
     if (user == null) {
         return res.status(400).send('Cannot find user')
     }

@@ -28,6 +28,7 @@ form {
 .card img {
   background-size: contain;
   max-height: 350px;
+  min-height: 350px;
 }
 
 .btn.btn-primary {
