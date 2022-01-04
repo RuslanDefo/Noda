@@ -29,6 +29,7 @@ form {
   background-size: contain;
   max-height: 350px;
   min-height: 350px;
+  object-fit: contain;
 }
 
 .btn.btn-primary {
