@@ -111,4 +111,8 @@ padding-bottom: 5px;
 .navigation.active {
   background: gray;
 }
+
+.d-flex.mod {
+  margin: 10px 0;
+}
 /*# sourceMappingURL=styles.css.map */

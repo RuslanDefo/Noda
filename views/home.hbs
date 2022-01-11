@@ -16,8 +16,8 @@
 
                 <div class="col">
                     <div class="card shadow-sm">
-                        {{#if image}}
-                            <img src="/images/{{image}}" alt="">
+                        {{#if imgPath}}
+                            <img src="/images/{{imgPath}}" alt="">
                         {{else}}
                             <img src="https://via.placeholder.com/200x200/258DC8/E0F6FD" alt="">
                         {{/if}}
@@ -28,10 +28,12 @@
 
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary"><a
-                                            href="/readPost?id={{id}}"> Read more </a></button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary"><a href="/readPost?currId={{currId}}"> Read more </a></button>
                                 </div>
                              <h5>  TAGS:  <small class="text-muted"> {{tags}}</small> </h5>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mod">
+                                {{Date}}
                             </div>
                         </div>
                     </div>
@@ -45,8 +47,8 @@
 
                 <div class="col">
                     <div class="card shadow-sm">
-                        {{#if image}}
-                            <img src="/images/{{image}}" alt="">
+                        {{#if imgPath}}
+                            <img src="/images/{{imgPath}}" alt="">
                         {{else}}
                             <img src="https://via.placeholder.com/200x200/258DC8/E0F6FD" alt="">
                         {{/if}}
@@ -57,8 +59,7 @@
 
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary"><a
-                                            href="/readPost?id={{id}}"> Read more </a></button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary"><a href="/readPost?currId={{currId}}"> Read more !!!</a></button>
                                 </div>
                                 <h5>  TAGS:       <small class="text-muted">{{tags}}</small> </h5>
                             </div>
